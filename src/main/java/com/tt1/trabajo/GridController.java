@@ -35,6 +35,12 @@ public class GridController {
 	@GetMapping("/grid")
     public String solicitud(@RequestParam int tok, Model model) {
 		DatosSimulation ds = ics.descargarDatos(tok);
+		
+		if (ds == null) {
+	        model.addAttribute("token", tok);
+	        return "esperando";
+	        }
+		
         model.addAttribute("count", ds.getAnchoTablero());
         model.addAttribute("maxTime", ds.getMaxSegundos());
         Map<String, String> colors = new HashMap<>();

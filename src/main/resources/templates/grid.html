@@ -1,51 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<head>
-    	<title>Welcome</title>
+    	<title>Simulación</title>
 		<style>
 			.grid {
 		  		display: grid;
-		  		grid-template-columns: repeat(3, 50px);
+		  		
 		  		grid-gap: 5px;
+                margin-top: 20px;
 			}
 
 			.grid div {
 		  		width: 50px;
 		  		height: 50px;
+                border: 1px solid #ccc; 
 			}
 		</style>
 	</head>
 	<body>
 		<div class="slider-container">
-		    <input type="range" id="mySlider" min="0" th:max="${maxTime}" value="50">
-		    <span id="sliderValue">0</span>
+            <input type="range" id="mySlider" min="0" th:max="${maxTime - 1}" value="0">
+		    <span>Segundo: </span><span id="sliderValue">0</span>
 		</div>
-		<div class="grid" id='gr'></div>
-		<script th:inline="javascript">
-			const count = [[${count}]];
-			const colors = [[${colors}]];
-			function createSquares(){
-				var grid = document.getElementById('gr');
-				for(var i = 0; i < count; i++){
-					for(var j = 0; j < count; j++){
-				    	var node = document.createElement("div");
-						node.id = i+'-'+j;
-				      	node.style.background = colors['0-'+i+'-'+j]??'blue';
-				      	grid.appendChild(node);
-				    }
-				}
-				document.getElementsByClassName('grid').item(0).style.gridTemplateColumns = 'repeat('+count+',50px)';
-			}
-			const slider = document.getElementById("mySlider");
+		<div class="grid" id="gr"></div>
 
-			slider.addEventListener("input", function() {
-		    	for(var y = 0; y < count; y++){
-					for(var x = 0; x < count; x++){
-						var node = document.getElementById(y+'-'+x);
-						node.style.background = colors[slider.value+'-'+y+'-'+x]??'blue';
-					}
-				}
-			});
+		<script th:inline="javascript">
+		    const count = [[${count}]];
+		    const colors = [[${colors}]];
+		    
+		    function createSquares(){
+		        var grid = document.getElementById('gr');
+		        // Ajustamos las columnas de la rejilla
+		        grid.style.gridTemplateColumns = 'repeat('+count+', 50px)';
+
+		        // CORRECCIÓN AQUÍ: y < count y x < count
+		        for(var y = 0; y < count; y++){
+		            for(var x = 0; x < count; x++){
+		                var node = document.createElement("div");
+		                node.id = y + '-' + x;
+		                // Color inicial (segundo 0) o azul si no hay dato
+		                node.style.backgroundColor = colors['0-'+y+'-'+x] || 'blue';
+		                grid.appendChild(node);
+		            }
+		        }
+		    }
+
+		    const slider = document.getElementById("mySlider");
+		    const sliderValueDisplay = document.getElementById("sliderValue");
+
+		    slider.addEventListener("input", function() {
+		        sliderValueDisplay.textContent = slider.value;
+		        for(var y = 0; y < count; y++){
+		            for(var x = 0; x < count; x++){
+		                var node = document.getElementById(y+'-'+x);
+		                if(node) {
+		                    node.style.backgroundColor = colors[slider.value+'-'+y+'-'+x] || 'blue';
+		                }
+		            }
+		        }
+		    });
+
+           
+            createSquares();
+
 		</script>
 	</body>
 </html>
